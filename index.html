@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To Kill a Mockingbird — Interactive Simulator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f6;--sur:#ffffff;--sur2:#f4f2ed;
+  --bd:rgba(0,0,0,0.10);--bd2:rgba(0,0,0,0.18);
+  --t:#1a1a18;--t2:#5a5a54;--t3:#8a8a82;
+  --te:#1D9E75;--tel:#E1F5EE;--tem:#9FE1CB;--ted:#0F6E56;
+  --bl:#185FA5;--bll:#E6F1FB;--re:#A32D2D;--rel:#FCEBEB;
+  --pu:#534AB7;--r:10px;--rl:14px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.app{display:grid;grid-template-columns:252px 1fr;min-height:100vh}
+.sb{background:var(--sur);border-right:0.5px solid var(--bd);padding:1.2rem 1rem;display:flex;flex-direction:column;gap:.35rem;position:sticky;top:0;height:100vh;overflow-y:auto}
+.bk{padding:.2rem .5rem .8rem;border-bottom:0.5px solid var(--bd);margin-bottom:.35rem}
+.bk-n{font-size:14px;font-weight:600;color:var(--t);line-height:1.4}
+.bk-s{font-size:11px;color:var(--t3);margin-top:2px}
+.pl{font-size:11px;color:var(--t3);padding:0 .5rem}
+.pb{height:4px;background:var(--sur2);border-radius:999px;overflow:hidden;margin:.3rem .5rem .65rem}
+.pf{height:100%;background:var(--te);border-radius:999px;transition:width .5s}
+.sbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);padding:.2rem .5rem .15rem;margin-top:.15rem}
+.wb{display:flex;align-items:center;gap:8px;padding:.42rem .65rem;border-radius:var(--r);border:0.5px solid transparent;cursor:pointer;background:transparent;text-align:left;width:100%;transition:all .15s}
+.wb:hover:not(.lk){background:var(--sur2);border-color:var(--bd)}
+.wb.ac{background:var(--tel);border-color:var(--tem)}
+.wb.lk{opacity:.4;cursor:not-allowed}
+.wd{width:20px;height:20px;border-radius:50%;background:var(--sur2);border:0.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--t2);flex-shrink:0}
+.wb.ac .wd,.wb.dn .wd{background:var(--te);color:#fff;border-color:var(--ted)}
+.wi{flex:1;min-width:0}
+.wi-t{font-size:12px;font-weight:500;color:var(--t);line-height:1.3}
+.wi-c{font-size:10px;color:var(--t3)}
+.rpt-btn{margin-top:auto;padding-top:.8rem;border-top:0.5px solid var(--bd);display:flex;flex-direction:column;gap:6px}
+.rpt-b{display:flex;align-items:center;gap:8px;width:100%;padding:.52rem .75rem;border-radius:var(--r);border:0.5px solid var(--bd2);background:var(--sur2);font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .15s}
+.rpt-b:hover{background:#eeecea;border-color:var(--bd2)}
+.rpt-b.ac{background:var(--tel);border-color:var(--tem);color:var(--ted)}
+.dl-b{display:flex;align-items:center;gap:8px;width:100%;padding:.52rem .75rem;border-radius:var(--r);border:0.5px solid var(--bd);background:transparent;font-size:12px;font-weight:600;color:var(--t3);cursor:pointer;transition:all .15s}
+.dl-b:hover{background:var(--sur2);color:var(--t2);border-color:var(--bd2)}
+.mn{padding:2rem 2.5rem;max-width:740px}
+.ey{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ted);margin-bottom:3px}
+.h1{font-size:22px;font-weight:600;color:var(--t);margin-bottom:4px}
+.ms{font-size:13px;color:var(--t2);margin-bottom:1.2rem}
+.sc{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--ted);background:var(--tel);padding:2px 9px;border-radius:999px;margin-left:7px;font-weight:600}
+.tabs{display:flex;gap:2px;border-bottom:0.5px solid var(--bd);margin-bottom:1.4rem}
+.tab{padding:7px 14px;font-size:13px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-0.5px;cursor:pointer;color:var(--t2);transition:all .15s;border-radius:6px 6px 0 0}
+.tab:hover{color:var(--t);background:var(--sur2)}
+.tab.on{color:var(--ted);border-bottom-color:var(--te);font-weight:600}
+.scc{background:var(--sur);border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:1rem}
+.ss{height:7px;background:linear-gradient(90deg,#1D9E75,#5DCAA5)}
+.sb2{padding:1.35rem}
+.sl{display:inline-flex;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ted);background:var(--tel);padding:2px 10px;border-radius:999px;margin-bottom:.6rem}
+.st{font-size:16px;font-weight:600;color:var(--t);margin-bottom:.5rem;line-height:1.4}
+.sx{font-size:14px;color:var(--t2);line-height:1.75;margin-bottom:.85rem}
+.sq{border-left:3px solid var(--te);padding:.5rem 1rem;background:var(--tel);border-radius:0 var(--r) var(--r) 0;font-size:13px;font-style:italic;color:var(--ted);margin-bottom:.85rem;line-height:1.6}
+.cb2{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--bl);cursor:pointer;background:var(--bll);border:0.5px solid rgba(24,95,165,.2);padding:5px 12px;border-radius:999px;margin-bottom:.6rem;transition:all .15s}
+.cb2:hover{background:#d0e8f8}
+.clb{background:var(--bll);border:0.5px solid rgba(24,95,165,.22);border-radius:var(--r);padding:.75rem 1rem;font-size:13px;color:var(--bl);line-height:1.7;margin-bottom:.85rem;display:none}
+.clb.op{display:block}
+.clb b{font-weight:700;display:block;margin-bottom:3px}
+.ql{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:.42rem}
+.chs{display:flex;flex-direction:column;gap:7px}
+.ch{padding:.68rem 1rem;background:var(--sur);border:0.5px solid var(--bd2);border-radius:var(--r);font-size:14px;color:var(--t);cursor:pointer;text-align:left;transition:all .15s;line-height:1.5}
+.ch:hover:not(.dis){background:var(--sur2);transform:translateX(3px)}
+.ch.cor{background:var(--tel);border-color:var(--tem);color:var(--ted)}
+.ch.wrg{background:var(--rel);border-color:#F09595;color:var(--re)}
+.ch.dis{cursor:default;transform:none}
+.oc{margin-top:.85rem;padding:.95rem 1.15rem;border-radius:var(--r);font-size:14px;line-height:1.75;display:none}
+.oc.win{background:var(--tel);border:0.5px solid var(--tem);color:var(--ted)}
+.oc.los{background:var(--rel);border:0.5px solid #F09595;color:var(--re)}
+.oc b{display:block;font-size:15px;margin-bottom:3px}
+.nb{margin-top:.7rem;padding:.52rem 1.15rem;background:var(--te);color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
+.nb:hover{background:var(--ted)}
+.nb.pu{background:var(--pu)}
+.nb.pu:hover{background:#3C3489}
+.sctr{font-size:12px;color:var(--t3);margin-bottom:.6rem}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:1rem}
+.vc{background:var(--sur);border:0.5px solid var(--bd);border-radius:var(--r);padding:.78rem 1rem;cursor:pointer;transition:all .15s;min-height:76px}
+.vc:hover{border-color:var(--bd2)}
+.vc.fl{background:var(--tel);border-color:var(--tem)}
+.vw{font-size:14px;font-weight:600;color:var(--t)}
+.vh{font-size:12px;color:var(--t3);margin-top:2px}
+.vd{font-size:13px;color:var(--ted);margin-top:6px;line-height:1.5;display:none}
+.vc.fl .vd{display:block}
+.vc.fl .vh{display:none}
+.gi{background:var(--bll);border:0.5px solid rgba(24,95,165,.2);border-radius:var(--r);padding:.82rem 1rem;font-size:14px;color:var(--bl);margin-bottom:1rem;line-height:1.75}
+.gcc{background:var(--sur);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.15rem;margin-bottom:1rem}
+.gq{font-size:15px;font-weight:500;color:var(--t);margin-bottom:.65rem;line-height:1.5}
+.go-list{display:flex;flex-direction:column;gap:6px}
+.go{padding:.58rem .88rem;background:var(--sur2);border:0.5px solid var(--bd);border-radius:var(--r);font-size:14px;color:var(--t);cursor:pointer;text-align:left;transition:all .15s}
+.go:hover:not(.dis){border-color:var(--bd2);background:#eeecea}
+.go.cor{background:var(--tel);border-color:var(--tem);color:var(--ted)}
+.go.wrg{background:var(--rel);border-color:#F09595;color:var(--re)}
+.go.dis{cursor:default}
+.ge{margin-top:.65rem;padding:.68rem 1rem;border-radius:var(--r);font-size:13px;line-height:1.6;display:none}
+.ge.win{background:var(--tel);color:var(--ted)}
+.ge.los{background:var(--rel);color:var(--re)}
+.jc{background:var(--sur);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.15rem;margin-bottom:1rem}
+.jc h3{font-size:14px;font-weight:600;color:var(--t);margin-bottom:.28rem}
+.jc p{font-size:13px;color:var(--t2);margin-bottom:.55rem;line-height:1.65}
+.jta{width:100%;min-height:88px;padding:.58rem .78rem;border:0.5px solid var(--bd2);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--t);background:var(--bg);resize:vertical;line-height:1.65}
+.jta:focus{outline:none;border-color:var(--te)}
+.sr{display:flex;align-items:center;gap:8px;margin-top:5px}
+.sv{padding:5px 13px;background:var(--tel);color:var(--ted);border:0.5px solid var(--tem);border-radius:6px;font-size:12px;cursor:pointer;transition:background .15s}
+.sv:hover{background:var(--tem)}
+.sf{font-size:12px;color:var(--ted);display:none}
+/* ── Report styles ── */
+.rp-hero{background:var(--sur);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.6rem 1.8rem;margin-bottom:1.1rem;display:flex;align-items:center;gap:1.4rem}
+.rp-grade{width:88px;height:88px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;font-weight:800}
+.rp-grade.A{background:#E1F5EE;border:3px solid var(--tem);color:var(--ted)}
+.rp-grade.B{background:#E6F1FB;border:3px solid rgba(24,95,165,.35);color:var(--bl)}
+.rp-grade.C{background:#FFF8E1;border:3px solid #FFD54F;color:#8A6600}
+.rp-grade.D{background:#FFF3E0;border:3px solid #FFAB40;color:#7A4200}
+.rp-grade.F{background:var(--rel);border:3px solid #F09595;color:var(--re)}
+.rp-grade .gl{font-size:38px;line-height:1}
+.rp-grade .gs{font-size:11px;font-weight:700;margin-top:2px}
+.rp-info{}
+.rp-info h2{font-size:18px;font-weight:700;color:var(--t);margin-bottom:3px}
+.rp-info p{font-size:13px;color:var(--t2);line-height:1.6}
+.rp-pend{background:var(--sur2);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.15rem 1.4rem;margin-bottom:1.1rem;font-size:13px;color:var(--t2);line-height:1.7}
+.rp-pend b{display:block;color:var(--t);margin-bottom:3px;font-size:14px}
+.rp-tbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1.1rem;background:var(--sur);border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.rp-tbl th{background:var(--sur2);padding:.52rem .85rem;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);border-bottom:0.5px solid var(--bd)}
+.rp-tbl td{padding:.52rem .85rem;border-bottom:0.5px solid var(--bd);color:var(--t2);vertical-align:top}
+.rp-tbl tr:last-child td{border-bottom:none}
+.rp-tbl td:first-child{color:var(--t);font-weight:500}
+.rp-tbl .tot{background:var(--sur2);font-weight:700}
+.rp-tbl .tot td{color:var(--t);border-top:0.5px solid var(--bd2)}
+.rp-pill{display:inline-flex;align-items:center;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.rp-pill.g{background:var(--tel);color:var(--ted)}
+.rp-pill.b{background:var(--rel);color:var(--re)}
+.rp-pill.n{background:var(--sur2);color:var(--t3)}
+.rp-sec{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:.55rem;margin-top:.2rem}
+.rp-jblk{background:var(--sur);border:0.5px solid var(--bd);border-radius:var(--rl);margin-bottom:.7rem;overflow:hidden}
+.rp-jh{background:var(--sur2);padding:.5rem .9rem;font-size:12px;font-weight:600;color:var(--t2);border-bottom:0.5px solid var(--bd)}
+.rp-jb{padding:.65rem .9rem;font-size:13px;color:var(--t2);line-height:1.7;white-space:pre-wrap;min-height:42px}
+.rp-jb.mt{color:var(--t3);font-style:italic}
+.rp-print{padding:.52rem 1.15rem;background:var(--sur2);color:var(--t2);border:0.5px solid var(--bd2);border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:1.4rem}
+.rp-print:hover{background:#eeecea}
+@media print{.sb{display:none}.mn{max-width:100%;padding:1rem}.rp-print{display:none}}
+@media(max-width:600px){.app{grid-template-columns:1fr}.sb{position:static;height:auto}.mn{padding:1rem}.vg{grid-template-columns:1fr}.rp-hero{flex-direction:column;gap:.8rem}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sb" id="SB">
+  <div class="bk">
+    <div class="bk-n">To Kill a Mockingbird</div>
+    <div class="bk-s">Harper Lee &middot; 8th Grade Simulator</div>
+  </div>
+  <div class="pl" id="PL">Week 1 of 8</div>
+  <div class="pb"><div class="pf" id="PF" style="width:12.5%"></div></div>
+  <div class="sbl">Weeks</div>
+  <div id="WL"></div>
+  <div class="rpt-btn">
+    <button class="rpt-b" id="RPB" onclick="showRep()">&#128196; Final Report &amp; Grade</button>
+    <button class="dl-b" onclick="dlHTML()">&#11015;&#65039; Download as HTML file</button>
+  </div>
+</aside>
+<main class="mn" id="MN"></main>
+</div>
+<script>
+var W=[
+  {id:0,ti:"Maycomb Beginnings",ch:"Ch. 1-4",rf:"Introduction to characters and setting.",gt:"Basic Sentence Structure",
+  gn:"A sentence needs a <b>subject</b> (who/what) and a <b>predicate</b> (what they do or are). Without both parts it is a fragment, not a complete sentence.",
+  sc:[
+    {lo:"The Finch Front Yard",ti:"Meeting Dill",
+    tx:"It is a sweltering summer in Maycomb, Alabama. A boy named Dill has arrived next door to visit his aunt. He walks over and announces boldly that he has already read every book his aunt owns. Jem and Scout are not sure what to make of him.",
+    qt:"\"I'm Charles Baker Harris. I can read. You got anything needs readin' I can do it.\"",
+    cl:"Think about what this tells us about Dill — is he trying to impress them, or just make a friend? What is the best way to respond to someone new who is trying to connect?",
+    q:"How should Scout and Jem respond to Dill?",
+    cs:[
+      {t:"Ignore him and go back inside.",c:false,o:"Ignoring Dill would lose one of the most important friendships in the story. Curiosity and openness are how great friendships begin."},
+      {t:"Ask his name and invite him to play.",c:true,o:"Exactly! This simple warm response begins one of the novel's most important friendships and drives much of the adventure ahead."},
+      {t:"Tell him reading is not impressive and walk away.",c:false,o:"That response is unkind and shuts a door. Dill's love of stories becomes a huge part of what fuels Scout and Jem's imagination."},
+      {t:"Challenge him to prove it by reading something right now.",c:false,o:"A challenge feels aggressive to someone new. A warmer response builds the trust this friendship will need later."}
+    ]},
+    {lo:"The Radley House",ti:"The Dare",
+    tx:"The children are obsessed with Boo Radley, the mysterious neighbor who never comes outside. Dill dares Jem to run up and touch the Radley house. The whole neighborhood whispers about Boo.",
+    qt:"\"Let's try to make him come out. I'd like to see what he looks like.\"",
+    cl:"The children only know rumors about Boo, not facts. Think about what courage really means here, and what curiosity can teach us about people we fear.",
+    q:"Should Jem accept the dare and touch the Radley house?",
+    cs:[
+      {t:"Yes — it's just a dare and Boo probably isn't real anyway.",c:false,o:"Dismissing what we don't understand isn't courage. The children slowly learn not to treat Boo like a myth."},
+      {t:"Yes — facing small fears can be a first step toward understanding.",c:true,o:"Good thinking! Jem does touch the house. This small act of courage is the first step toward seeing Boo as a real person, not a monster."},
+      {t:"No — the rumors are too scary and it's not worth the risk.",c:false,o:"Letting rumors control you is exactly the kind of thinking Atticus challenges throughout the novel."},
+      {t:"No — they should knock and introduce themselves properly.",c:false,o:"A thoughtful idea, but the children are not ready yet. Jem's dare is a more realistic first step toward curiosity."}
+    ]}
+  ],
+  vo:[
+    {w:"Apothecary",d:"A pharmacist; someone who prepares and sells medicine."},
+    {w:"Assuaged",d:"Calmed or soothed; made a feeling less intense."},
+    {w:"Taciturn",d:"Reserved and quiet; a person of very few words."},
+    {w:"Melancholy",d:"A deep feeling of sadness or gloom."},
+    {w:"Piety",d:"Strong devotion to religious beliefs and duties."},
+    {w:"Sojourn",d:"A short, temporary stay somewhere."}
+  ],
+  gc:[
+    {q:"Which of these is a complete sentence?",op:["Running through the yard quickly.","Scout ran to the oak tree.","Because Jem dared her.","The hot Maycomb summer."],an:1,ex:"\"Scout ran to the oak tree\" has a subject (Scout) and a predicate (ran to the oak tree). The others are fragments missing one of those parts."},
+    {q:"What is the subject of: \"Atticus read the newspaper every evening.\"",op:["read","newspaper","every evening","Atticus"],an:3,ex:"\"Atticus\" is the subject — he is the one performing the action of reading."}
+  ],
+  jo:[
+    {p:"Describe Maycomb in your own words based on Lee's descriptions. What kind of town do you picture? What details stand out most to you?"},
+    {p:"If you were Scout, what would you think of Boo Radley based only on the rumors you had heard? Would you be curious, scared, or both?"}
+  ]},
+  {id:1,ti:"Courage & Curiosity",ch:"Ch. 5-8",rf:"Early plot developments and character relationships.",gt:"Types of Sentences",
+  gn:"Four types: <b>Declarative</b> (statement, ends with period), <b>Interrogative</b> (question, ends with ?), <b>Imperative</b> (command), <b>Exclamatory</b> (strong emotion, ends with !). Each creates a different effect on the reader.",
+  sc:[
+    {lo:"The Oak Tree Knothole",ti:"The Mystery Gifts",
+    tx:"Scout and Jem discover small treasures left in a knothole near the Radley property — gum, pennies, and two carved soap figures that look remarkably like them. Someone is leaving gifts. But who?",
+    qt:"\"Two small images carved in soap. One was the figure of a boy, the other wore a crude dress.\"",
+    cl:"Think carefully: who would know what Scout and Jem look like well enough to carve them? Who lives close to that tree and watches the neighborhood every single day?",
+    q:"Who is most likely leaving the gifts in the knothole?",
+    cs:[
+      {t:"Miss Maudie — she is friendly and watches the children.",c:false,o:"Miss Maudie is kind, but has no reason to leave anonymous gifts. Think about who watches specifically from that location."},
+      {t:"Dill — a prank before he leaves for summer.",c:false,o:"Dill is not in Maycomb year-round. The gifts appear over time, which means someone local is watching regularly."},
+      {t:"Boo Radley — reaching out in the only way he can.",c:true,o:"Exactly! The carved figures show the giver knows exactly what the children look like. Boo, confined to his home, is silently reaching out with kindness."},
+      {t:"Atticus — teaching the children a lesson about neighbors.",c:false,o:"Atticus is direct. If he had a lesson to teach, he would teach it openly. The secrecy points to someone who cannot come outside."}
+    ]},
+    {lo:"Maycomb Street — Winter Night",ti:"The Blanket",
+    tx:"Miss Maudie's house catches fire on a cold night. The whole neighborhood watches from the street. Scout stands in the cold for a long time without realizing someone has quietly placed a blanket around her shoulders.",
+    qt:"\"Atticus, somebody put a blanket around me.\" \"Boo Radley. You were so busy looking at the fire you didn't know it when he put the blanket around you.\"",
+    cl:"Notice how Boo acts — he does not speak, does not reveal himself. He just helps. What does that tell you about his true character compared to all the frightening rumors?",
+    q:"What does the blanket scene reveal about Boo Radley?",
+    cs:[
+      {t:"That Boo is dangerous and was spying on the children.",c:false,o:"If Boo wanted to harm the children, this was a perfect opportunity. Instead he showed care and warmth — the opposite of danger."},
+      {t:"That Boo is a kind, caring person who watches over the children.",c:true,o:"Yes! The blanket is a powerful symbol. Boo saw Scout shivering and acted selflessly and quietly. This moment begins to unravel all the scary rumors."},
+      {t:"That Boo wanted to introduce himself politely.",c:false,o:"Boo stays completely hidden — which also tells us something important. He cares deeply but is not ready or able to interact openly."},
+      {t:"That someone else put the blanket there and Atticus guessed it was Boo.",c:false,o:"Atticus is a careful, logical thinker. The novel treats this as confirmed fact. Boo was there."}
+    ]}
+  ],
+  vo:[
+    {w:"Benign",d:"Gentle and kind; not causing harm to others."},
+    {w:"Contentious",d:"Likely to cause an argument; controversial."},
+    {w:"Pensive",d:"Deeply thoughtful, often in a somewhat sad way."},
+    {w:"Placid",d:"Calm and peaceful; not easily upset or disturbed."},
+    {w:"Vehement",d:"Showing strong feeling or conviction; very forceful."},
+    {w:"Foray",d:"A first attempt at something new; a sudden venture into unfamiliar territory."}
+  ],
+  gc:[
+    {q:"What type of sentence is: \"Did Boo Radley leave those gifts?\"",op:["Declarative","Interrogative","Imperative","Exclamatory"],an:1,ex:"It ends with a question mark and asks something — that makes it interrogative. Interrogative sentences always ask a question."},
+    {q:"Identify the sentence type: \"Don't touch the Radley house!\"",op:["Declarative","Interrogative","Imperative","Exclamatory"],an:2,ex:"It gives a command or instruction — that makes it imperative. Sentence type is determined by its purpose, not just its punctuation."}
+  ],
+  jo:[
+    {p:"How has your opinion of Boo Radley changed from Chapter 1 to Chapter 8? What specific evidence changed your thinking?"},
+    {p:"Write about a time you misjudged someone based on rumors or first impressions. What happened when you learned the truth?"}
+  ]},
+  {id:2,ti:"Conflicts & Themes",ch:"Ch. 9-12",rf:"Deepening conflicts and emerging themes of justice and empathy.",gt:"Parts of Speech",
+  gn:"<b>Nouns</b> name people, places, or things. <b>Verbs</b> show action or state. <b>Adjectives</b> describe nouns. <b>Adverbs</b> modify verbs, adjectives, or other adverbs — they often end in -ly and tell how, when, or where.",
+  sc:[
+    {lo:"The Finch Living Room",ti:"The Mockingbird Lesson",
+    tx:"Atticus gives Scout and Jem air rifles for Christmas but adds one strict rule. He tells them it is a sin to do one specific thing with their new guns — something that stops Scout cold.",
+    qt:"\"Shoot all the bluejays you want, if you can hit 'em, but remember it's a sin to kill a mockingbird.\"",
+    cl:"Why mockingbirds specifically? Think about what a mockingbird does — it only sings and gives joy. It never hurts anyone. Who in this story is innocent, causes no harm, yet is destroyed by others?",
+    q:"What does Atticus mean by this lesson?",
+    cs:[
+      {t:"He is teaching them about wildlife conservation laws.",c:false,o:"Atticus uses this as a metaphor — a deeper comparison. Look for who in the story only makes music and never harms anyone."},
+      {t:"He means they should protect innocent people who do no harm to others.",c:true,o:"Perfect! The mockingbird symbolizes innocence. Tom Robinson and Boo Radley — people who only do good — are mockingbirds destroyed by the cruelty around them."},
+      {t:"He means singing birds bring bad luck and should be left alone.",c:false,o:"This does not fit Atticus's rational, moral character. His lessons are always about ethics and human behavior, not superstition."},
+      {t:"He is telling them not to waste ammunition on small birds.",c:false,o:"That is a very literal reading! Atticus rarely gives only practical advice — always look for the deeper ethical meaning behind his words."}
+    ]},
+    {lo:"Calpurnia's Church",ti:"A Different World",
+    tx:"Calpurnia takes Scout and Jem to her church — First Purchase African M.E. Church. The building is simple with no hymn books and no organ. The congregation sings from memory. Some members are unwelcoming, but most embrace the children warmly.",
+    qt:"\"It was an ancient paint-peeled frame building, the only church in Maycomb with a steeple and bell.\"",
+    cl:"This is the first time Scout and Jem enter a world very different from their own. Notice how Calpurnia moves naturally between two worlds. What does this teach about empathy — truly seeing life through someone else's eyes?",
+    q:"What is the most important lesson Scout takes from visiting Calpurnia's church?",
+    cs:[
+      {t:"That her own church is better because it has more resources.",c:false,o:"That conclusion shows exactly the kind of prejudice the novel challenges. Having fewer resources does not make something less valuable or meaningful."},
+      {t:"That Calpurnia has a rich, full life outside the Finch home and deserves more respect.",c:true,o:"Exactly! Scout sees Calpurnia as a complete person for the first time — with her own community, identity, and world. That is the beginning of real empathy."},
+      {t:"That the Black community of Maycomb is poor and needs charity from others.",c:false,o:"That is a condescending interpretation. The scene is about community strength and belonging — not about pity or charity."},
+      {t:"That she should not have come because some members did not want them there.",c:false,o:"One hostile reaction does not erase the whole experience. Scout is meant to look past momentary discomfort to understand a much larger truth."}
+    ]}
+  ],
+  vo:[
+    {w:"Invective",d:"Harsh, insulting language directed angrily at someone."},
+    {w:"Guileless",d:"Innocent and without deception; completely honest and open."},
+    {w:"Obstinate",d:"Stubbornly refusing to change one's mind or position."},
+    {w:"Mortification",d:"A feeling of deep embarrassment or humiliation."},
+    {w:"Condescend",d:"To act as if you are superior to others; to patronize."},
+    {w:"Transgressions",d:"Actions that go against a rule, law, or moral principle."}
+  ],
+  gc:[
+    {q:"In \"The old courthouse stood silently in the square,\" which word is an adverb?",op:["old","courthouse","stood","silently"],an:3,ex:"\"Silently\" modifies the verb \"stood\" — it tells us how. Adverbs often end in -ly and describe verbs, adjectives, or other adverbs."},
+    {q:"Which word is an adjective in: \"Atticus gave a calm, steady response\"?",op:["gave","response","calm","Atticus"],an:2,ex:"\"Calm\" describes the noun \"response\" — that makes it an adjective. (\"Steady\" is also an adjective in this sentence.)"}
+  ],
+  jo:[
+    {p:"Why does Atticus say it is a 'sin' to kill a mockingbird — not just wrong, but a sin? What does that specific word choice tell you about his values?"},
+    {p:"Have you ever seen someone living very different lives in different places, the way Calpurnia does? What did you notice about them?"}
+  ]},
+  {id:3,ti:"Society & Character",ch:"Ch. 13-16",rf:"Character development and societal insight as the trial approaches.",gt:"Subject-Verb Agreement",
+  gn:"Singular subjects take singular verbs. Plural subjects take plural verbs. Collective nouns like <em>jury</em> and <em>crowd</em> are usually treated as <b>singular</b> in American English. Indefinite pronouns like <em>everyone</em>, <em>nobody</em>, and <em>each</em> are always singular.",
+  sc:[
+    {lo:"The Finch Porch",ti:"Aunt Alexandra Arrives",
+    tx:"Aunt Alexandra comes to stay with the family. She is determined that Scout act like a proper young lady and that the Finches maintain their family reputation above all else. She pushes Atticus to talk to the children about their heritage.",
+    qt:"\"The longer a family had been squatting on one patch of land the finer it was.\"",
+    cl:"Aunt Alexandra believes your family name determines who you are. Think about what Atticus believes in contrast — he once said you never really know someone until you walk in their shoes. What truly makes a person's character?",
+    q:"How should Scout respond to Aunt Alexandra's emphasis on family heritage?",
+    cs:[
+      {t:"Accept her view — family history is the most important thing about a person.",c:false,o:"This contradicts everything Atticus has taught. Individual choices, empathy, and courage define character — not social class or family name."},
+      {t:"Be openly rude and refuse to listen to anything she says.",c:false,o:"Rudeness is not the answer. Part of growing up is learning to navigate people you disagree with respectfully and thoughtfully."},
+      {t:"Listen respectfully but hold firmly to Atticus's lessons about judging people by their actions.",c:true,o:"That is the right balance! Scout can respect her aunt's presence without adopting her values. This tension between their worldviews is central to the novel."},
+      {t:"Ask Atticus to send Aunt Alexandra back home.",c:false,o:"That avoids the conflict rather than growing through it. The novel asks Scout to engage with difficult people and difficult ideas, not run away from them."}
+    ]},
+    {lo:"Maycomb Jail — Night",ti:"The Mob",
+    tx:"A mob of men gathers at the jail where Tom Robinson is held the night before the trial. Atticus sits alone by the door. The children sneak out and find him. Scout runs up and, not understanding the danger, spots Walter Cunningham's father in the crowd and starts talking to him.",
+    qt:"\"Hey, Mr. Cunningham. How's your entailment gettin' along?\" The men were quiet.",
+    cl:"Scout does not argue or lecture anyone. She just talks to Mr. Cunningham like a regular person — asks about his son, his entailment. Why might reminding someone of their individual humanity be more powerful than any argument could be?",
+    q:"Why does Scout's innocent conversation with Mr. Cunningham stop the mob?",
+    cs:[
+      {t:"She embarrasses him in front of all the other men.",c:false,o:"It is not embarrassment — it is recognition. She treats him as a full person with a child and a life. That is harder to ignore than any logical argument."},
+      {t:"She reminds him of his individual humanity and connection to the Finch family.",c:true,o:"Exactly! A mob works by erasing individuality. Scout breaks through that by seeing Mr. Cunningham as a neighbor and a father — not just part of an angry crowd."},
+      {t:"She threatens to tell her father and the sheriff what they are planning.",c:false,o:"Scout makes no threats at all. The power of this moment is its complete innocence — she simply acts like a child who sees a neighbor she recognizes."},
+      {t:"The men are afraid of Atticus when they see children might be harmed.",c:false,o:"There is some truth to that, but the decisive turning point is Scout's conversation. Atticus himself says it was Scout who turned the crowd around."}
+    ]}
+  ],
+  vo:[
+    {w:"Acquiescence",d:"Reluctant acceptance or agreement without protest."},
+    {w:"Venerable",d:"Commanding great respect because of age, wisdom, or character."},
+    {w:"Edification",d:"Instruction intended to improve someone morally or intellectually."},
+    {w:"Indigenous",d:"Naturally occurring or originating in a particular place."},
+    {w:"Predilection",d:"A natural preference or special liking for something."},
+    {w:"Ecclesiastical",d:"Related to the Christian Church or its clergy and organization."}
+  ],
+  gc:[
+    {q:"Choose the correct verb: \"The jury ___ still deciding the verdict.\"",op:["are","were","is","be"],an:2,ex:"\"Jury\" is a collective noun treated as singular in American English. It takes the singular verb \"is.\" This is one of the most important subject-verb agreement rules."},
+    {q:"Which sentence uses correct subject-verb agreement?",op:["Everyone in the courtroom were silent.","The crowd of men was angry.","Nobody in Maycomb know the truth.","Each of the children was afraid."],an:3,ex:"\"Each\" is always singular and takes the singular verb \"was.\" The others incorrectly pair singular subjects with plural verbs."}
+  ],
+  jo:[
+    {p:"Atticus says to 'climb into someone's skin and walk around in it.' Write about a time you truly tried to see things from another person's perspective. What did you learn?"},
+    {p:"Is mob mentality still a problem in the world today? Can you think of any examples from current events or your own experience?"}
+  ]},
+  {id:4,ti:"Rising Tension",ch:"Ch. 17-20",rf:"Rising tension, moral challenges, and trial testimony begins.",gt:"Pronouns and Antecedents",
+  gn:"A pronoun must clearly refer to its <b>antecedent</b> — the noun it replaces — and agree with it in number and gender. When a pronoun could refer to more than one noun, the sentence has vague pronoun reference, one of the most common writing errors.",
+  sc:[
+    {lo:"Maycomb Courtroom",ti:"Atticus's Cross-Examination",
+    tx:"Mayella Ewell claims Tom Robinson attacked her. Atticus calmly asks which arm was injured, then asks Tom to stand up. Tom's left arm hangs completely dead at his side — it was destroyed in a cotton gin when he was a boy.",
+    qt:"\"Which hand did he use, Miss Mayella?\" \"I... it was his right hand.\" \"Tom, stand up. Let Miss Mayella have a good look at you.\"",
+    cl:"Mayella's injuries were mostly on the right side of her face. A right-handed person standing in front of you would hit the LEFT side of your face. Tom's LEFT arm is useless. Think carefully about what this means for the case against him.",
+    q:"What does the evidence about Tom's arm prove?",
+    cs:[
+      {t:"That Tom is very strong and could easily have overpowered Mayella.",c:false,o:"Actually, the opposite. Tom's left arm is completely useless. The physical evidence points away from him, not toward him."},
+      {t:"That Tom Robinson almost certainly did not cause Mayella's injuries.",c:true,o:"Correct! The injuries are consistent with a left-handed person — and Bob Ewell is left-handed. The evidence is powerful and clear, even if the jury chooses to ignore it."},
+      {t:"That the injuries were self-inflicted and no crime took place.",c:false,o:"Atticus's argument is about who caused the injuries, not whether they happened at all. Mayella was genuinely hurt."},
+      {t:"Nothing important — injuries can happen in many different ways.",c:false,o:"Physical evidence that directly contradicts a witness's account is extremely significant in a court of law. Atticus uses this moment very methodically."}
+    ]},
+    {lo:"Outside the Courthouse",ti:"Dolphus Raymond's Secret",
+    tx:"Everyone in Maycomb believes Dolphus Raymond is a drunk. But he reveals to Scout and Dill that his brown bag contains only Coca-Cola. He pretends to be drunk to give people a reason they can accept for his choice to live among the Black community.",
+    qt:"\"I try to give 'em a reason, you see. It helps folks if they can latch onto a reason.\"",
+    cl:"Maycomb cannot accept that a white man would simply choose to live differently based on moral conviction — so Raymond gives them a story they can understand. What does this reveal about how people react to things they don't understand?",
+    q:"Why does Dolphus Raymond pretend to be drunk?",
+    cs:[
+      {t:"Because he is ashamed of his lifestyle and needs to hide it from others.",c:false,o:"Raymond is not ashamed at all — he explains himself clearly and directly to Scout. He is using the town's own prejudices as protective cover."},
+      {t:"To give people a comfortable explanation so they stop questioning his life choices.",c:true,o:"Exactly! Maycomb cannot accept a moral choice, but they can easily accept 'he is just a drunk.' Raymond uses their narrow-mindedness as cover for living the way he wants."},
+      {t:"Because he is genuinely trying to quit drinking and Coca-Cola helps him.",c:false,o:"The text tells us directly that this is a deliberate performance for the town's benefit. Raymond is completely clear about this when talking to Scout and Dill."},
+      {t:"Because he does not trust anyone in Maycomb to understand his reasoning.",c:false,o:"His explanation is more specific than that. He gives people a simple 'reason to latch onto' because that is all the town's limited thinking allows for."}
+    ]}
+  ],
+  vo:[
+    {w:"Acrimonious",d:"Angry, bitter, and resentful in manner or tone of speech."},
+    {w:"Corroborated",d:"Confirmed or strengthened by additional evidence or testimony."},
+    {w:"Perfidious",d:"Deceitful and untrustworthy; guilty of deliberate betrayal."},
+    {w:"Volition",d:"The power to make your own choices and decisions; free will."},
+    {w:"Minute (adj.)",d:"Extremely small; very tiny and precise in detail."},
+    {w:"Expunge",d:"To completely erase or remove something from a record."}
+  ],
+  gc:[
+    {q:"What is the problem with: \"Tom told Atticus that he was innocent.\"",op:["No problem — the meaning is perfectly clear.","'He' could refer to either Tom or Atticus.","'Tom' should be replaced with a pronoun for variety.","The sentence is a fragment."],an:1,ex:"\"He\" is ambiguous — it could refer to Tom or to Atticus. A clearer version: \"Tom told Atticus, 'I am innocent.'\" Always make sure a pronoun clearly refers to one specific antecedent."},
+    {q:"Choose the correct pronoun: \"Neither Tom nor the witnesses changed ___ testimony.\"",op:["their","our","its","his"],an:0,ex:"When 'neither...nor' connects subjects, the pronoun agrees with the nearer subject. \"Witnesses\" is plural, so the plural pronoun \"their\" is correct here."}
+  ],
+  jo:[
+    {p:"Is it ever okay to pretend or deceive (like Dolphus Raymond does) to protect yourself from unfair judgment? Where is the line between self-protection and dishonesty?"},
+    {p:"Atticus says Tom Robinson is 'a dead man' the minute Mayella accused him. What does he mean by that? Do you think that is fair? Why or why not?"}
+  ]},
+  {id:5,ti:"The Trial Begins",ch:"Ch. 21-24",rf:"The trial climaxes and racial injustice is on full display.",gt:"Adverbs and Adjectives",
+  gn:"<b>Adjectives</b> describe or modify nouns (a <em>silent</em> courtroom). <b>Adverbs</b> describe verbs, adjectives, or other adverbs (spoke <em>quietly</em>; <em>deeply</em> unfair). A very common error is using 'good' (adjective) when 'well' (adverb) is needed.",
+  sc:[
+    {lo:"Maycomb Courtroom — Verdict",ti:"The Jury Returns",
+    tx:"After deliberating, the jury returns a verdict: guilty on all counts. Atticus had presented clear, logical evidence of Tom's innocence. As the verdict is read aloud, in the balcony above, every person in the Black community section rises silently as Atticus walks past them.",
+    qt:"\"Miss Jean Louise, stand up. Your father's passin'.\"",
+    cl:"The jury convicted Tom despite the evidence. Yet the Black community rises for Atticus in this moment of defeat. Think carefully — what has Atticus done throughout this trial that would earn such a powerful response even in loss?",
+    q:"Why does the Black community rise when Atticus walks by after the verdict?",
+    cs:[
+      {t:"Because they are celebrating a victory they had hoped for.",c:false,o:"The jury returned a guilty verdict — there is no victory to celebrate. The rising is a quiet act of profound respect in a devastating moment of loss."},
+      {t:"Because they need to move and let people through the crowded balcony.",c:false,o:"Reverend Sykes specifically tells Scout to stand for Atticus as he passes. This is a deliberate, intentional act of honor and gratitude."},
+      {t:"Because Atticus was the first white lawyer to truly defend a Black man with full conviction, skill, and dignity.",c:true,o:"Exactly. Atticus did not go through the motions. He fought with everything he had. Even in defeat, that kind of courage and commitment earns profound, lasting respect."},
+      {t:"Because they are angry at the verdict and want to create a visible protest.",c:false,o:"The scene is described as quiet and completely dignified. It is one of the most moving moments in the entire novel — not a protest or disturbance."}
+    ]},
+    {lo:"Finch Home — Morning After",ti:"Miss Maudie's Words",
+    tx:"The morning after the devastating verdict, the children are crushed. Miss Maudie calls them over and says something that surprises Scout: that there are people in Maycomb quietly working for fairness. She points out that Judge Taylor appointed Atticus specifically — not a newer or easier lawyer.",
+    qt:"\"We're making a step... it's just a baby-step, but it's a step.\"",
+    cl:"Miss Maudie does not say the world is fair or that everything will work out. She says progress is slow but real. What does it mean to keep believing in justice when justice fails right in front of your eyes?",
+    q:"What does Miss Maudie mean by 'a baby-step'?",
+    cs:[
+      {t:"That the jury almost acquitted Tom and was very close to fairness.",c:false,o:"The jury convicted unanimously. Miss Maudie's point is specifically about the people who quietly resist injustice — not about how close the vote came."},
+      {t:"That small, quiet acts of resistance against injustice are still real and meaningful progress.",c:true,o:"Right! Judge Taylor choosing Atticus, the jury taking hours instead of minutes — these are small but real signs that change is possible, even when the system still fails."},
+      {t:"That children should be patient and wait for adults to eventually fix things.",c:false,o:"Miss Maudie is not asking anyone to be passive. She is pointing to real examples of courage that exist and inviting the children to recognize and value them."},
+      {t:"That the guilty verdict was secretly a victory in disguise.",c:false,o:"Miss Maudie does not sugarcoat the verdict at all. It is a genuine injustice. Her point is about the existence of people who still fight — not about the terrible outcome."}
+    ]}
+  ],
+  vo:[
+    {w:"Adamant",d:"Refusing to change one's mind; completely firm and unyielding in a position."},
+    {w:"Acquit",d:"To officially declare someone not guilty of a crime in a court of law."},
+    {w:"Irrefutable",d:"Impossible to deny or argue against; completely undeniable."},
+    {w:"Fatalistic",d:"Believing all events are predetermined and unavoidable no matter what."},
+    {w:"Impertinence",d:"Rudeness; a failure to show proper respect to others."},
+    {w:"Commiserate",d:"To express sympathy and sorrow; to share in someone's grief or disappointment."}
+  ],
+  gc:[
+    {q:"Which sentence uses an adverb correctly?",op:["Atticus argued good in court.","The jury decided quick.","Atticus spoke calmly to the jury.","Tom answered the questions honest."],an:2,ex:"\"Calmly\" is an adverb correctly modifying the verb \"spoke.\" The other sentences use adjectives (good, quick, honest) where adverbs are needed (well, quickly, honestly)."},
+    {q:"Identify the adjective in: \"The guilty verdict shocked the quiet courtroom.\"",op:["shocked","quietly","guilty","verdict"],an:2,ex:"\"Guilty\" is an adjective modifying the noun \"verdict\" — it describes what kind of verdict it was. (\"Quiet\" is also an adjective here, modifying \"courtroom.\")"}
+  ],
+  jo:[
+    {p:"The jury found Tom guilty despite clear evidence of his innocence. Have you ever witnessed something deeply unfair that others simply accepted as normal? How did it make you feel?"},
+    {p:"Miss Maudie says Maycomb is making 'baby-steps.' Do you think slow, gradual progress is enough, or should change happen faster? Defend your answer with specific reasoning."}
+  ]},
+  {id:6,ti:"Climax and Aftermath",ch:"Ch. 25-28",rf:"Aftermath of the verdict, Tom's death, and Bob Ewell's revenge.",gt:"Complex Sentences",
+  gn:"A <b>complex sentence</b> has one independent clause (can stand alone) and at least one dependent clause (cannot stand alone). Dependent clauses begin with subordinating conjunctions such as: <em>because, although, when, while, since, if, unless, after, before, until</em>.",
+  sc:[
+    {lo:"Tom Robinson's Home",ti:"Tom's Death",
+    tx:"Tom Robinson is shot dead while trying to escape prison — he is hit seventeen times. Mr. Underwood, the newspaper editor who previously seemed racially prejudiced, writes a powerful editorial comparing Tom's death to the senseless slaughter of songbirds.",
+    qt:"\"Tom was a dead man the minute Mayella Ewell opened her mouth and screamed.\"",
+    cl:"Underwood's editorial directly echoes the mockingbird metaphor from early in the novel. Think about what it means when even a man who held prejudiced views is compelled to acknowledge such a profound injustice publicly.",
+    q:"What does Mr. Underwood's editorial reveal to the reader?",
+    cs:[
+      {t:"That he believed Tom was guilty but the punishment was too harsh.",c:false,o:"Underwood explicitly compares Tom to an innocent songbird. This is a condemnation of the injustice itself — not a comment on the severity of Tom's punishment."},
+      {t:"That even people with prejudiced views could see Tom's death was a profound injustice.",c:true,o:"Exactly. Underwood was not a champion of racial equality — which makes his editorial far more powerful. When even he says it was wrong, the injustice becomes impossible to deny."},
+      {t:"That the prison system in Maycomb is corrupt and needs major reform.",c:false,o:"Underwood is making a moral point specifically about innocence and injustice — not a broader critique of prison conditions or administration."},
+      {t:"That Atticus should have worked harder to prevent Tom's death.",c:false,o:"The editorial echoes Atticus's own words about Tom's innocence. It is about what was lost — not a criticism of Atticus or his efforts."}
+    ]},
+    {lo:"Dark Road — Halloween Night",ti:"Hey, Boo",
+    tx:"Scout is walking home in a bulky ham costume from the school pageant when someone attacks her and Jem in the pitch darkness. Jem's arm is badly broken. Scout survives, padded by her costume. A man she does not recognize carries Jem to safety. Back inside the house, she finally looks at the quiet stranger standing in the corner.",
+    qt:"\"Hey, Boo,\" I said. \"Miss Jean Louise, meet your neighbor. Mr. Arthur Radley.\"",
+    cl:"Think about the entire journey from Chapter 1 to this moment: from being completely terrified of Boo Radley to being saved by him. Scout says 'Hey, Boo' — not 'Mr. Radley.' What does that simple, warm greeting tell you about how much she has grown as a person?",
+    q:"What does Scout's greeting 'Hey, Boo' reveal about her growth throughout the novel?",
+    cs:[
+      {t:"That she is too tired and frightened to remember her proper manners.",c:false,o:"It is not a lapse in manners — it is a breakthrough in genuine connection. 'Boo' is what she has always called him, but now it is said with warmth and recognition instead of fear."},
+      {t:"That she now sees Boo as a real person and true neighbor, not a monster to fear.",c:true,o:"Yes! This is one of the most important moments in all of Scout's growth. She greets him simply and warmly — as if they have always been neighbors. That is empathy fully realized."},
+      {t:"That she is confused from the attack and does not realize who saved them.",c:false,o:"The novel makes completely clear that she recognizes him. The greeting is calm, direct, and warm — she knows exactly who Boo Radley is."},
+      {t:"That she has simply forgotten how frightening Boo used to seem to her.",c:false,o:"Scout has not forgotten — she has genuinely grown beyond her old fear. That distinction is crucial. Outgrowing fear through understanding is very different from simply forgetting."}
+    ]}
+  ],
+  vo:[
+    {w:"Devoid",d:"Completely lacking something; entirely without a particular quality."},
+    {w:"Furtive",d:"Done secretly or quietly; trying hard not to be noticed by others."},
+    {w:"Irate",d:"Feeling or expressing extreme anger; furious."},
+    {w:"Luminous",d:"Bright, glowing, or radiating light; full of inner light."},
+    {w:"Eluded",d:"Successfully escaped from or skillfully avoided something or someone."},
+    {w:"Recluse",d:"A person who withdraws from society and lives in solitude."}
+  ],
+  gc:[
+    {q:"Identify the dependent clause in: \"Although the evidence was clear, the jury convicted Tom.\"",op:["the jury convicted Tom","Although the evidence was clear","the evidence was clear","convicted Tom"],an:1,ex:"\"Although the evidence was clear\" is the dependent clause — it begins with the subordinating conjunction 'although' and cannot stand alone as a complete sentence."},
+    {q:"Which of the following is a complex sentence?",op:["Scout ran home.","Jem and Dill played all summer.","Because Bob Ewell was angry, he sought revenge.","The trial ended and the jury left."],an:2,ex:"It has a dependent clause (\"Because Bob Ewell was angry\") joined to an independent clause (\"he sought revenge\"). The conjunction 'because' makes the first clause dependent."}
+  ],
+  jo:[
+    {p:"Tom Robinson died while trying to escape from prison. Do you think he had any other realistic options? Was his decision to run understandable? Explain your reasoning fully."},
+    {p:"Think of a moment in your own life when someone surprised you by being much kinder or braver than you expected. What happened and how did it affect you?"}
+  ]},
+  {id:7,ti:"Resolution and Lessons",ch:"Ch. 29-31",rf:"Resolution, Boo Radley's heroism, and the lessons of growing up.",gt:"Punctuation — Commas and Periods",
+  gn:"Use a comma <b>(1)</b> before a coordinating conjunction (FANBOYS) joining two independent clauses, <b>(2)</b> after an introductory phrase or clause, and <b>(3)</b> between items in a series. A <b>comma splice</b> incorrectly joins two complete sentences with only a comma — fix it with a period, semicolon, or a conjunction.",
+  sc:[
+    {lo:"The Finch Home",ti:"Sheriff Tate's Decision",
+    tx:"Bob Ewell is dead. Sheriff Heck Tate says Bob fell on his own knife. Atticus suspects Jem may have stabbed Ewell in self-defense and wants the full truth to come out. But Heck Tate quietly and firmly insists on his own version of what happened.",
+    qt:"\"Bob Ewell fell on his knife. I'm not gonna have it any other way.\"",
+    cl:"Think carefully about who Tate is protecting with this decision — and exactly why. If the real truth became public, what would happen to Boo Radley? Think about the mockingbird metaphor from Chapter 10 one final, crucial time.",
+    q:"Why does Heck Tate insist that Bob Ewell fell on his own knife?",
+    cs:[
+      {t:"He is covering up a crime in order to protect himself from consequences.",c:false,o:"Tate gains absolutely nothing personally from this decision. His choice is entirely about protecting someone innocent from harm he does not deserve."},
+      {t:"To protect Boo Radley from public exposure that would destroy his quiet, fragile life.",c:true,o:"Exactly right! Dragging Boo into a public trial, newspapers, and community gossip would be a terrible cruelty. As Atticus himself says — it would be like shooting a mockingbird."},
+      {t:"Because the town disliked Bob Ewell so much that no one would bother to investigate.",c:false,o:"That may be partly true, but Tate's stated reasoning is far more specific and deliberately moral. He is trying to protect Boo from the damage that public attention would cause."},
+      {t:"Because he genuinely believes the story and is not aware of what actually happened.",c:false,o:"Tate knows exactly what happened. His quiet, firm insistence is a fully deliberate and compassionate choice — not a mistaken or confused belief."}
+    ]},
+    {lo:"Boo Radley's Porch",ti:"Scout Walks Boo Home",
+    tx:"Scout walks Boo Radley to his front door. She stands on his porch and imagines the street and yard the way Boo must have seen them all these years — the children playing, the seasons changing, the small gifts left in the tree. She realizes he gave them so much and they gave him so very little.",
+    qt:"\"Atticus was right. You never really know a man until you stand in his shoes and walk around in them.\"",
+    cl:"This is the culmination of Scout's entire journey through the novel. She has finally, truly done what Atticus told her to do from the very beginning. Standing on Boo's porch, seeing the world from his perspective — what does she understand now that she could not before?",
+    q:"What does Scout finally understand as she stands on Boo Radley's porch?",
+    cs:[
+      {t:"That Boo was ultimately strange and unknowable and she will never truly understand him.",c:false,o:"The exact opposite! This is the moment Scout understands him most deeply and clearly. Standing in his place gives her the perspective that makes everything in the novel finally click."},
+      {t:"That Atticus was right all along — true empathy means genuinely seeing the world through another person's eyes.",c:true,o:"This is the novel's most important lesson, and Scout has fully and honestly earned it. She walked in Boo's shoes — literally and figuratively — and the whole world opened up to her."},
+      {t:"That she wasted years being afraid of someone who was her quiet friend and protector all along.",c:false,o:"The feeling Scout has is not regret or shame — it is true, earned understanding. Looking back with wisdom is very different from looking back with guilt, and Scout has grown into wisdom."},
+      {t:"That Maycomb is a better and fairer place than she once believed it to be.",c:false,o:"Scout does not leave the novel with comfortable or easy optimism about Maycomb. She leaves with something far more valuable and harder to earn — genuine wisdom and empathy."}
+    ]}
+  ],
+  vo:[
+    {w:"Acumen",d:"Sharp insight and good judgment; the ability to assess situations quickly and accurately."},
+    {w:"Recluse",d:"A person who deliberately withdraws from society and lives alone."},
+    {w:"Cordial",d:"Warm, friendly, and genuinely polite in manner."},
+    {w:"Inconspicuous",d:"Not easily noticed; avoiding drawing attention to oneself."},
+    {w:"Reconcile",d:"To restore friendly relations; to make two different things consistent with each other."},
+    {w:"Aberration",d:"Something that significantly departs from what is considered normal or expected."}
+  ],
+  gc:[
+    {q:"Which sentence below contains a comma splice?",op:["Scout ran home, and Jem followed right behind her.","After the trial ended, Atticus sat quietly at his desk.","Boo was kind, he saved the children from Bob Ewell.","Although she was tired, Scout listened carefully to Atticus."],an:2,ex:"\"Boo was kind, he saved the children\" incorrectly joins two complete sentences with only a comma. Correct versions: \"Boo was kind; he saved the children.\" or \"Boo was kind, and he saved the children.\""},
+    {q:"Where should the comma be placed in: \"When Boo walked Scout home she finally understood Atticus's lesson.\"",op:["After the word \"understood\"","After the word \"home\"","After the word \"walked\"","No comma is needed in this sentence"],an:1,ex:"After an introductory dependent clause (\"When Boo walked Scout home\"), always use a comma before the start of the main independent clause. The comma belongs after \"home.\""}
+  ],
+  jo:[
+    {p:"If you could speak directly to Scout at the very end of the novel, what would you say to her? What lesson from her journey do you think will matter most to her as she grows up?"},
+    {p:"Atticus tells Scout that most people are good when you finally see them for who they really are. Do you agree with that? Has reading this novel changed the way you think about people you do not know well?"}
+  ]}
+];
+
+var S={wk:0,tab:"scenario",si:0,ul:1,view:"week",done:new Set(),scr:{},gI:{},gA:{},cl:{}};
+function sv2(){try{localStorage.setItem("tkam3",JSON.stringify(Object.assign({},S,{done:[...S.done]})));}catch(e){}}
+function ld(){try{var d=localStorage.getItem("tkam3");if(d){var p=JSON.parse(d);S=Object.assign({},S,p,{done:new Set(p.done||[])});}}catch(e){}}
+ld();
+
+function rSB(){
+  document.getElementById("WL").innerHTML=W.map(function(w){
+    var lk=w.id>=S.ul,dn=S.done.has(w.id),ac=w.id===S.wk&&S.view==="week";
+    return'<button class="wb'+(ac?" ac":"")+(lk?" lk":"")+(dn?" dn":"")+'" onclick="selW('+w.id+')">'
+      +'<div class="wd">'+(dn?"&#10003;":w.id+1)+'</div>'
+      +'<div class="wi"><div class="wi-t">'+w.ti+'</div><div class="wi-c">'+w.ch+'</div></div>'
+      +(lk?'<span style="font-size:12px;color:#8a8a82">&#128274;</span>':"")
+      +'</button>';
+  }).join("");
+  document.getElementById("PF").style.width=(S.ul/8*100)+"%";
+  document.getElementById("PL").textContent="Week "+Math.min(S.ul,8)+" of 8";
+  var rb=document.getElementById("RPB");
+  if(rb)rb.className="rpt-b"+(S.view==="report"?" ac":"");
+}
+
+function selW(id){if(id>=S.ul)return;S.wk=id;S.tab="scenario";S.si=0;S.view="week";rAll();}
+function rAll(){rSB();rMN();}
+
+function rMN(){
+  if(S.view==="report"){rRP();return;}
+  var w=W[S.wk],mx=w.sc.length+w.gc.length,sc=S.scr[S.wk]||0;
+  var tbs=[{id:"scenario",lb:"&#128214; Scenarios"},{id:"vocab",lb:"&#128218; Vocabulary"},{id:"grammar",lb:"&#9999;&#65039; Grammar"},{id:"journal",lb:"&#128221; Journal"}];
+  document.getElementById("MN").innerHTML=
+    '<div class="ey">Week '+(S.wk+1)+' of 8</div>'
+    +'<div class="h1">'+w.ti+'<span class="sc">&#11088; '+sc+'/'+mx+'</span></div>'
+    +'<div class="ms">'+w.ch+' &nbsp;&middot;&nbsp; '+w.rf+'</div>'
+    +'<div class="tabs">'+tbs.map(function(t){return'<button class="tab'+(S.tab===t.id?" on":"")+'" onclick="sT(\''+t.id+'\')">'+t.lb+'</button>';}).join("")+'</div>'
+    +'<div id="TC"></div>';
+  rT();
+}
+
+function sT(t){S.tab=t;rMN();}
+function rT(){
+  var w=W[S.wk],el=document.getElementById("TC");
+  if(!el)return;
+  if(S.tab==="scenario")el.innerHTML=rSC(w);
+  else if(S.tab==="vocab")el.innerHTML=rVC(w);
+  else if(S.tab==="grammar")el.innerHTML=rGC(w);
+  else if(S.tab==="journal")el.innerHTML=rJC(w);
+}
+
+function rSC(w){
+  var si=S.si,sc=w.sc[si];
+  var ck=S.wk+"_ch_"+si,ak=S.wk+"_sc_"+si;
+  var ans=S.scr[ak]!==undefined,chi=S.scr[ck],coi=S.scr[ak];
+  var clK=S.wk+"-"+si,clOp=S.cl[clK];
+  var h='<div class="sctr">Scene '+(si+1)+' of '+w.sc.length+'</div>'
+    +'<div class="scc"><div class="ss"></div><div class="sb2">'
+    +'<div class="sl">&#128205; '+sc.lo+'</div>'
+    +'<div class="st">'+sc.ti+'</div>'
+    +'<div class="sx">'+sc.tx+'</div>'
+    +'<div class="sq">'+sc.qt+'</div>'
+    +'<div class="cb2" onclick="tCl(\''+clK+'\')">'+(clOp?"&#9650; Hide clue":"&#128161; Show clue")+'</div>'
+    +'<div class="clb'+(clOp?" op":"")+'" id="cl-'+clK+'"><b>&#128161; Clue &mdash;</b> '+sc.cl+'</div>'
+    +'<div class="ql">Your choice: '+sc.q+'</div><div class="chs">';
+  sc.cs.forEach(function(c,ci){
+    var cls="ch";
+    if(ans){cls+=" dis";if(ci===coi)cls+=" cor";else if(ci===chi)cls+=" wrg";}
+    h+='<button class="'+cls+'" onclick="doAns('+ci+')">'+c.t+'</button>';
+  });
+  h+='</div>';
+  if(ans){
+    var win=sc.cs[chi]&&sc.cs[chi].c;
+    h+='<div class="oc '+(win?"win":"los")+'" style="display:block">'
+      +'<b>'+(win?"&#9989; Good thinking!":"&#10060; Not quite.")+'</b>'+sc.cs[chi].o;
+    if(si<w.sc.length-1){
+      h+='<br><br><button class="nb" onclick="nxSc()">Next scene &rarr;</button>';
+    }else if(S.done.has(S.wk)){
+      h+='<br><br><span style="color:var(--ted);font-weight:600">&#9989; Week '+(S.wk+1)+' Complete!</span>';
+    }else{
+      h+='<br><br><button class="nb pu" onclick="mkDn()">Mark Week '+(S.wk+1)+' Complete &#127881;</button>';
+    }
+    h+='</div>';
+  }
+  h+='</div></div>';
+  return h;
+}
+
+function tCl(k){S.cl[k]=!S.cl[k];rT();}
+
+function doAns(ci){
+  var w=W[S.wk],si=S.si,ak=S.wk+"_sc_"+si;
+  if(S.scr[ak]!==undefined)return;
+  var coi=-1;
+  w.sc[si].cs.forEach(function(c,i){if(c.c)coi=i;});
+  S.scr[S.wk+"_ch_"+si]=ci;
+  S.scr[ak]=coi;
+  if(w.sc[si].cs[ci].c)S.scr[S.wk]=(S.scr[S.wk]||0)+1;
+  sv2();rT();
+}
+
+function nxSc(){var w=W[S.wk];if(S.si<w.sc.length-1){S.si++;rT();}}
+function mkDn(){S.done.add(S.wk);S.ul=Math.min(S.wk+2,8);sv2();rAll();}
+
+function rVC(w){
+  var h='<div style="font-size:13px;color:var(--t2);margin-bottom:.75rem">Tap each card to reveal its definition.</div><div class="vg">';
+  w.vo.forEach(function(v,vi){
+    h+='<div class="vc" id="vc-'+S.wk+'-'+vi+'" onclick="flV('+vi+')">'
+      +'<div class="vw">'+v.w+'</div>'
+      +'<div class="vh">tap to reveal</div>'
+      +'<div class="vd">'+v.d+'</div>'
+      +'</div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function flV(vi){var el=document.getElementById("vc-"+S.wk+"-"+vi);if(el)el.classList.toggle("fl");}
+
+function rGC(w){
+  var gi=S.gI[S.wk]||0,gc=w.gc[gi],ak=S.wk+"-"+gi,ans=S.gA[ak];
+  var h='<div class="gi"><b>'+w.gt+'</b><br>'+w.gn+'</div>';
+  h+='<div class="gcc">'
+    +'<div style="font-size:11px;color:var(--t3);margin-bottom:.5rem">Question '+(gi+1)+' of '+w.gc.length+'</div>'
+    +'<div class="gq">'+gc.q+'</div>'
+    +'<div class="go-list">';
+  gc.op.forEach(function(o,oi){
+    var cls="go";
+    if(ans!==undefined){cls+=" dis";if(oi===gc.an)cls+=" cor";else if(oi===ans)cls+=" wrg";}
+    h+='<button class="'+cls+'" onclick="doGr('+gi+','+oi+')">'+o+'</button>';
+  });
+  h+='</div>';
+  if(ans!==undefined){
+    h+='<div class="ge '+(ans===gc.an?"win":"los")+'" style="display:block"><b>'+(ans===gc.an?"Correct!":"Not quite.")+'</b> '+gc.ex+'</div>';
+    if(gi<w.gc.length-1)h+='<button class="nb" style="margin-top:.7rem" onclick="nxGr()">Next question &rarr;</button>';
+  }
+  h+='</div>';
+  return h;
+}
+
+function doGr(gi,ch){
+  var w=W[S.wk],k=S.wk+"-"+gi;
+  if(S.gA[k]!==undefined)return;
+  S.gA[k]=ch;
+  if(ch===w.gc[gi].an)S.scr[S.wk]=(S.scr[S.wk]||0)+1;
+  sv2();rT();
+}
+
+function nxGr(){var w=W[S.wk],gi=S.gI[S.wk]||0;if(gi<w.gc.length-1){S.gI[S.wk]=gi+1;rT();}}
+
+function rJC(w){
+  var h="";
+  w.jo.forEach(function(j,ji){
+    var saved=lg("j-"+S.wk+"-"+ji);
+    h+='<div class="jc">'
+      +'<h3>Journal Prompt '+(ji+1)+'</h3>'
+      +'<p>'+j.p+'</p>'
+      +'<textarea class="jta" id="jt-'+S.wk+'-'+ji+'" placeholder="Write your thoughts here...">'+saved+'</textarea>'
+      +'<div class="sr">'
+        +'<button class="sv" onclick="svJ('+ji+')">Save response</button>'
+        +'<span class="sf" id="jf-'+S.wk+'-'+ji+'">Saved &#10003;</span>'
+      +'</div>'
+      +'</div>';
+  });
+  return h;
+}
+
+function svJ(ji){
+  var el=document.getElementById("jt-"+S.wk+"-"+ji);
+  if(el)ls("j-"+S.wk+"-"+ji,el.value);
+  var f=document.getElementById("jf-"+S.wk+"-"+ji);
+  if(f){f.style.display="inline";setTimeout(function(){f.style.display="none";},2000);}
+}
+
+/* ── Grading helpers ── */
+function wkScores(w){
+  var scC=0,scA=0,grC=0,grA=0;
+  w.sc.forEach(function(sc,si){
+    var chosen=S.scr[w.id+"_ch_"+si];
+    if(chosen!==undefined){scA++;if(sc.cs[chosen]&&sc.cs[chosen].c)scC++;}
+  });
+  w.gc.forEach(function(gc,gi){
+    var chosen=S.gA[w.id+"-"+gi];
+    if(chosen!==undefined){grA++;if(chosen===gc.an)grC++;}
+  });
+  return{scC:scC,scMax:w.sc.length,grC:grC,grMax:w.gc.length,scA:scA,grA:grA};
+}
+
+function letterGrade(pct){
+  if(pct>=90)return"A";if(pct>=80)return"B";if(pct>=70)return"C";if(pct>=60)return"D";return"F";
+}
+
+function gradeComment(g){
+  var m={A:"Outstanding work. You demonstrated strong comprehension and critical thinking throughout the novel.",
+         B:"Good effort. You showed solid understanding of the text with minor gaps.",
+         C:"Satisfactory work. Review the weeks where you struggled to strengthen your understanding.",
+         D:"Needs improvement. Re-reading missed sections and revisiting the questions is recommended.",
+         F:"Did not meet expectations. Please revisit the material and retake the activities."};
+  return m[g];
+}
+
+function showRep(){S.view="report";rAll();}
+
+function rRP(){
+  var total=0,maxTotal=0,attempted=0;
+  var rows="";
+  W.forEach(function(w){
+    var s=wkScores(w);
+    var wkC=s.scC+s.grC,wkMax=s.scMax+s.grMax;
+    var wkAttempted=s.scA+s.grA;
+    total+=wkC;maxTotal+=wkMax;attempted+=wkAttempted;
+    var pct=wkMax>0?Math.round(wkC/wkMax*100):0;
+    var done=S.done.has(w.id);
+    var scPill,grPill;
+    if(s.scA===0)scPill='<span class="rp-pill n">—</span>';
+    else scPill='<span class="rp-pill '+(s.scC===s.scMax?"g":"b")+'">'+s.scC+'/'+s.scMax+'</span>';
+    if(s.grA===0)grPill='<span class="rp-pill n">—</span>';
+    else grPill='<span class="rp-pill '+(s.grC===s.grMax?"g":"b")+'">'+s.grC+'/'+s.grMax+'</span>';
+    var totCell=wkAttempted===0?'<span class="rp-pill n">Not started</span>'
+      :(done?'<span class="rp-pill '+(pct>=70?"g":"b")+'">'+wkC+'/'+wkMax+' &nbsp;('+pct+'%)</span>'
+            :'<span class="rp-pill n">'+wkC+'/'+wkAttempted+' done</span>');
+    rows+='<tr>'
+      +'<td>Week '+(w.id+1)+': '+w.ti+'<br><span style="font-size:11px;color:var(--t3)">'+w.ch+'</span></td>'
+      +'<td>'+scPill+'</td>'
+      +'<td>'+grPill+'</td>'
+      +'<td>'+totCell+'</td>'
+      +'</tr>';
+  });
+
+  var allDone=S.done.size===8;
+  var pct=maxTotal>0?Math.round(total/maxTotal*100):0;
+  var grade=letterGrade(pct);
+  var comment=gradeComment(grade);
+
+  var hero="";
+  if(allDone){
+    hero='<div class="rp-hero">'
+      +'<div class="rp-grade '+grade+'">'
+        +'<div class="gl">'+grade+'</div>'
+        +'<div class="gs">'+pct+'%</div>'
+      +'</div>'
+      +'<div class="rp-info">'
+        +'<h2>'+total+' / '+maxTotal+' points</h2>'
+        +'<p>'+comment+'</p>'
+        +'<p style="margin-top:6px;font-size:12px;color:var(--t3)">Scenarios: '+
+          W.reduce(function(a,w){return a+wkScores(w).scC;},0)+'/'+W.reduce(function(a,w){return a+w.sc.length;},0)
+          +' &nbsp;&middot;&nbsp; Grammar: '+
+          W.reduce(function(a,w){return a+wkScores(w).grC;},0)+'/'+W.reduce(function(a,w){return a+w.gc.length;},0)
+        +'</p>'
+      +'</div>'
+      +'</div>';
+  }else{
+    var cntDone=S.done.size;
+    hero='<div class="rp-pend">'
+      +'<b>&#9200; Assignment In Progress</b>'
+      +'You have completed '+cntDone+' of 8 weeks. '
+      +(attempted>0?'Current score on attempted questions: '+total+' / '+attempted+' ('+Math.round(total/Math.max(attempted,1)*100)+'%).<br>':'')
+      +'Finish all 8 weeks to receive your final grade.'
+      +'</div>';
+  }
+
+  var journalHtml='';
+  W.forEach(function(w){
+    var hasAny=false;
+    w.jo.forEach(function(j,ji){var v=lg("j-"+w.id+"-"+ji);if(v.trim())hasAny=true;});
+    if(hasAny){
+      journalHtml+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin:.7rem 0 .3rem">Week '+(w.id+1)+': '+w.ti+'</div>';
+      w.jo.forEach(function(j,ji){
+        var v=lg("j-"+w.id+"-"+ji);
+        journalHtml+='<div class="rp-jblk">'
+          +'<div class="rp-jh">Prompt '+(ji+1)+': '+j.p.substring(0,80)+(j.p.length>80?"…":"")+'</div>'
+          +'<div class="rp-jb'+(v.trim()?"":" mt")+'">'+( v.trim()||"No response saved.")+'</div>'
+          +'</div>';
+      });
+    }
+  });
+
+  document.getElementById("MN").innerHTML=
+    '<div class="ey">To Kill a Mockingbird</div>'
+    +'<div class="h1" style="margin-bottom:.9rem">Final Report &amp; Grade</div>'
+    +(allDone?'<button class="rp-print" onclick="window.print()">&#128438; Print / Save as PDF</button>':'')
+    +hero
+    +'<div class="rp-sec">Score Breakdown by Week</div>'
+    +'<table class="rp-tbl">'
+      +'<thead><tr><th>Week</th><th>Scenarios</th><th>Grammar</th><th>Total</th></tr></thead>'
+      +'<tbody>'+rows+'</tbody>'
+      +(allDone?'<tfoot><tr class="tot"><td>Overall</td><td colspan="2"></td><td>'+total+'/'+maxTotal+' &mdash; '+pct+'% &mdash; <b>'+grade+'</b></td></tr></tfoot>':"")
+    +'</table>'
+    +(journalHtml?'<div class="rp-sec" style="margin-top:.5rem">Journal Responses</div>'+journalHtml
+      :'<div style="font-size:13px;color:var(--t3);margin-top:.5rem">No journal responses saved yet.</div>');
+}
+
+function dlHTML(){
+  var html=document.documentElement.outerHTML;
+  var blob=new Blob([html],{type:"text/html;charset=utf-8"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="tkam-simulator.html";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+var mm={};
+function lg(k){try{return localStorage.getItem("tkam_"+k)||"";}catch(e){return mm[k]||"";}}
+function ls(k,v){try{localStorage.setItem("tkam_"+k,v);}catch(e){mm[k]=v;}}
+
+rAll();
+</script>
+</body>
+</html>
